@@ -621,6 +621,79 @@
       margin-top: 14px;
     }
 
+    /* 30-Day Streak Matrix Grid */
+    .streak-matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .day-matrix-pill {
+      aspect-ratio: 1;
+      border: 1px solid var(--separator);
+      border-radius: 12px;
+      background: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--label-primary);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+    .day-matrix-pill:hover {
+      border-color: var(--tint-purple);
+      transform: translateY(-1px);
+    }
+    .day-matrix-pill.completed {
+      background: rgba(52, 199, 89, 0.08);
+      border-color: rgba(52, 199, 89, 0.35);
+      color: var(--tint-green);
+    }
+    .day-matrix-pill.completed .pill-sub {
+      font-size: 8px;
+      font-weight: 800;
+      color: var(--tint-green);
+    }
+    .day-matrix-pill.active {
+      background: var(--tint-purple);
+      color: #FFFFFF;
+      border-color: var(--tint-purple);
+      box-shadow: 0 3px 10px rgba(88, 86, 214, 0.3);
+    }
+    .day-matrix-pill.active .pill-sub {
+      font-size: 8px;
+      color: #FFFFFF;
+    }
+    .day-matrix-pill.milestone-day {
+      border-color: var(--tint-orange);
+    }
+    .day-matrix-pill.milestone-day .m-star {
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      font-size: 8px;
+    }
+    .editorial-arc-details {
+      background: var(--card-subtle);
+      border: 1px solid var(--separator);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--label-secondary);
+      line-height: 1.5;
+    }
+    .editorial-arc-details summary {
+      font-weight: 600;
+      color: var(--tint-purple);
+      cursor: pointer;
+      outline: none;
+    }
+
     /* Simulated Apple System UI Hooks inside Entry */
     .system-tray {
       display: flex;
@@ -1290,6 +1363,9 @@
   </div>
 
   <script>
+    const seriesDays = [{"Day": 1, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "The First Breath", "Editorial Prompt": "Begin with where you are right now. What is the immediate tempo of your life today? Don't judge it—just describe the speed.", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 2, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "The Physical Room", "Editorial Prompt": "Look up from your screen. Name three physical textures in the space around you that you haven't touched all day.", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 3, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "Noise vs. Quiet", "Editorial Prompt": "What was the loudest moment of your day today, and what was the quietest? Which one felt truer?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 4, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "The Commute & Drift", "Editorial Prompt": "During a walk, drive, or transit ride today: where did your eyes settle, and where did your mind wander?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 5, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "Unhooking the Tension", "Editorial Prompt": "Where in your physical body are you holding today's unsaid words or tasks? What happens when you soften that space?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 6, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "A Standout Sensation", "Editorial Prompt": "What was one standout flavor, temperature, or sound that broke through the blur of your day?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 7, "Week Arc": "Week 1: Tuning In & Grounding", "Title": "Week 1 Retrospective: The Recurring Thought", "Editorial Prompt": "Look back over your first seven days. What was one recurring thought or worry that kept trying to get your attention? Name it without arguing with it.", "Is Milestone": "Yes", "Milestone Focus": "Milestone 1: 7-Day Stillness Check"}, {"Day": 8, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "Internal Weather Report", "Editorial Prompt": "If your emotional state today were an actual landscape or weather report, what would it look like? Fog over water, crisp high sun, cold rain?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 9, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "The Unfinished Sentence", "Editorial Prompt": "What is something that happened recently that you didn't get to finish processing? Write down the unedited rest of it here.", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 10, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "Not Yours to Fix", "Editorial Prompt": "What is one situation or tension right now that is not yours to solve tonight? Give yourself permission to step back.", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 11, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "The Space Between", "Editorial Prompt": "Reflect on a quiet transition or pause you experienced today. How did it feel to step off the treadmill for five minutes?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 12, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "Notice the Unnoticed", "Editorial Prompt": "Name three small details in your immediate surroundings or daily routine that you usually overlook.", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 13, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "What to Leave Behind", "Editorial Prompt": "What is one obligation, resentment, or heavy expectation you are ready to set down before going to sleep tonight?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 14, "Week Arc": "Week 2: Internal Weather & Unburdening", "Title": "Two-Week Retrospective: The Compass", "Editorial Prompt": "Fourteen days in. Where has writing felt resistant, and where has it felt like relief? What have you learned about your own tempo?", "Is Milestone": "Yes", "Milestone Focus": "Milestone 2: Halfway Reflection"}, {"Day": 15, "Week Arc": "Week 3: People & Connection", "Title": "Felt Seen & Heard", "Editorial Prompt": "Who made you feel seen, heard, or backed up recently, even in a very small or subtle way?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 16, "Week Arc": "Week 3: People & Connection", "Title": "An Unsung Kindness", "Editorial Prompt": "What is a kind thing someone did today in your orbit that they probably forgot about thirty seconds later?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 17, "Week Arc": "Week 3: People & Connection", "Title": "Crossing Your Mind", "Editorial Prompt": "Who crossed your mind today that you haven't spoken to in a while? What memory surfaced with their name?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 18, "Week Arc": "Week 3: People & Connection", "Title": "Extending Grace", "Editorial Prompt": "Who in your circle could use a little extra grace or a gentle check-in right now? What might they be carrying?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 19, "Week Arc": "Week 3: People & Connection", "Title": "A Line That Stuck", "Editorial Prompt": "What is a fragment of conversation, a quote, or a line you heard today that lingered in your head?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 20, "Week Arc": "Week 3: People & Connection", "Title": "Boundaries as Self-Care", "Editorial Prompt": "What is one healthy boundary you held recently that protected your peace or focus? How did it feel?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 21, "Week Arc": "Week 3: People & Connection", "Title": "Three-Week Retrospective: Connection", "Editorial Prompt": "Three weeks in. How has your relationship to the people in your daily life felt? Who energizes your spirit?", "Is Milestone": "Yes", "Milestone Focus": "Milestone 3: Relational Synthesis"}, {"Day": 22, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "Feeling Most Like Yourself", "Editorial Prompt": "In what moment today did you feel most like yourself—free of performance, defense, or expectation?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 23, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "Protected Energy", "Editorial Prompt": "What is one creative project or career goal that deserves your fiercely protected energy right now?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 24, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "The Single Priority", "Editorial Prompt": "Strip away the noise of your task list. What is the single priority that deserves your best creative attention tomorrow?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 25, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "A Small Spark of Optimism", "Editorial Prompt": "What is a small, quiet indicator of optimism or forward momentum you are holding onto tonight?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 26, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "What Feeds Your Appetite", "Editorial Prompt": "What piece of writing, film, conversation, or music recently made you want to make something new?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 27, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "The Power of No", "Editorial Prompt": "What is something you agreed to that you secretly wish you had declined? What would it feel like to choose yourself next time?", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 28, "Week Arc": "Week 4: Agency, Purpose & Trajectory", "Title": "Four-Week Retrospective: Agency", "Editorial Prompt": "Four weeks completed. What parts of your life feel more within your agency and control now than they did a month ago?", "Is Milestone": "Yes", "Milestone Focus": "Milestone 4: Agency & Trajectory"}, {"Day": 29, "Week Arc": "Integration & Capstone", "Title": "The Harvest", "Editorial Prompt": "Look back across your entries from the past 28 days. Pick one single sentence or realization that you want to carry forward.", "Is Milestone": "No", "Milestone Focus": "—"}, {"Day": 30, "Week Arc": "Integration & Capstone", "Title": "The 30-Day Synthesis & Next Chapter", "Editorial Prompt": "You've built a 30-day journaling practice. What did you learn about your inner rhythm? What does the next chapter look like?", "Is Milestone": "Yes", "Milestone Focus": "Capstone Milestone: 30-Day Completion"}];
+    let selectedSeriesDay = 12;
+
     function switchTab(tab) {
       document.getElementById('tabTemplates').classList.toggle('active', tab === 'templates');
       document.getElementById('tabInspiration').classList.toggle('active', tab === 'inspiration');
@@ -1340,6 +1416,9 @@
           <div class="system-tray">
             <span class="system-chip lock">🔒 Protected by Face ID</span>
             <span class="system-chip">📅 Today, ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}</span>
+          </div>
+          <div style="font-size: 17px; font-weight: 600; color: var(--label-primary); margin-bottom: 14px; letter-spacing: -0.2px;">
+            I’m grateful for…
           </div>
           <div id="bulletContainer">
             <div class="bullet-row">
@@ -1635,67 +1714,29 @@
         title.innerText = 'Mood Check In';
         body.innerHTML = `
           <div class="system-tray">
-            <span class="system-chip" style="color: var(--tint-purple);">🧘 State of Mind (iOS Health)</span>
+            <span class="system-chip" style="color: var(--tint-purple);">🧘 State of Mind</span>
             <span class="system-chip">📅 Today, ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}</span>
           </div>
-          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 16px;">
             Take your emotional pulse and check in with your body.
           </div>
 
           <div class="entry-field">
             <label class="field-label">How are you feeling right now?</label>
-            <div class="valence-selector">
-              <button class="valence-btn" onclick="selectValence(this, 'Very Unpleasant')">
-                <span class="valence-emoji">🌧️</span>
-                <span>Very Unpleasant</span>
-              </button>
-              <button class="valence-btn" onclick="selectValence(this, 'Unpleasant')">
-                <span class="valence-emoji">☁️</span>
-                <span>Unpleasant</span>
-              </button>
-              <button class="valence-btn" onclick="selectValence(this, 'Neutral')">
-                <span class="valence-emoji">⛅</span>
-                <span>Neutral</span>
-              </button>
-              <button class="valence-btn active" onclick="selectValence(this, 'Pleasant')">
-                <span class="valence-emoji">🌤️</span>
-                <span>Pleasant</span>
-              </button>
-              <button class="valence-btn" onclick="selectValence(this, 'Very Pleasant')">
-                <span class="valence-emoji">☀️</span>
-                <span>Very Pleasant</span>
-              </button>
-            </div>
+            <textarea class="field-textarea" style="min-height: 85px;" placeholder="Put words to your current state… quiet, restless, grateful, scattered, steady…"></textarea>
           </div>
 
           <div class="entry-field">
             <label class="field-label">Where does this feeling live in your body?</label>
-            <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 6px;">
-              Tap somatic anchors:
+            <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 8px;">
+              Notice sensation, color, or texture:
             </div>
-            <div class="tag-chips-wrap">
-              <span class="tag-chip active" onclick="toggleTagChip(this)">🫁 Chest / Heart</span>
-              <span class="tag-chip" onclick="toggleTagChip(this)">💆 Shoulders / Neck</span>
-              <span class="tag-chip" onclick="toggleTagChip(this)">🦋 Stomach / Gut</span>
-              <span class="tag-chip" onclick="toggleTagChip(this)">🧠 Head / Temples</span>
-              <span class="tag-chip" onclick="toggleTagChip(this)">👐 Hands / Arms</span>
-              <span class="tag-chip" onclick="toggleTagChip(this)">👣 Feet / Ground</span>
-            </div>
-            <textarea class="field-textarea" style="min-height: 75px;" placeholder="Describe sensation, color, or texture (e.g. warm amber glow in chest; tight knot behind shoulders; buzzing, fluttery, heavy, expansive...)"></textarea>
+            <textarea class="field-textarea" style="min-height: 100px;" placeholder="A warm amber glow in the chest; a tight knot across the shoulders; buzzing, heavy, fluttery, soft, expansive…"></textarea>
           </div>
 
           <div class="entry-field">
             <label class="field-label">What is influencing your mood today?</label>
-            <div class="tag-chips-wrap">
-              <span class="tag-chip active-teal" onclick="toggleTagChip(this, 'teal')">Work</span>
-              <span class="tag-chip active-teal" onclick="toggleTagChip(this, 'teal')">Sleep</span>
-              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Health</span>
-              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Relationships</span>
-              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Family</span>
-              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Weather</span>
-              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Routine</span>
-            </div>
-            <input type="text" class="field-input" placeholder="Additional context (e.g. wrapped a big deadline, good morning coffee...)">
+            <textarea class="field-textarea" style="min-height: 85px;" placeholder="What’s on your mind? Conversations, sleep, work, small moments, or unspoken thoughts…"></textarea>
           </div>
 
           <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
@@ -1896,55 +1937,57 @@
         title.innerText = '30-Day Series';
         body.innerHTML = `
           <div class="system-tray">
-            <span class="system-chip" style="color: var(--tint-orange);">🏆 Day 12 of 30</span>
-            <span class="system-chip">🔥 12-Day Streak</span>
+            <span class="system-chip" style="color: var(--tint-orange);">🏆 30-Day Journey</span>
+            <span class="system-chip">🔥 12-Day Active Streak</span>
             <span class="system-chip">📅 Progressive Unlock</span>
           </div>
-          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
-            Guided sequential journeys, one day at a time.
-          </div>
-
+          
           <div class="series-progress-card">
             <div class="series-header-row">
-              <div class="series-title-text">Series: Mindful Grounding & Self-Discovery</div>
+              <div>
+                <div class="series-title-text">The Grounded Mind: 30 Days of Awareness</div>
+                <div style="font-size: 11px; color: var(--label-secondary); margin-top: 2px;">Apple Journal Curated Series · 4 Thematic Arcs</div>
+              </div>
               <div class="series-streak-badge">🔥 12 Days</div>
             </div>
             <div class="series-bar-track">
-              <div class="series-bar-fill" style="width: 40%;"></div>
+              <div class="series-bar-fill" id="seriesBarFill" style="width: 40%;"></div>
             </div>
             <div class="series-meta-row">
-              <span>Day 12 of 30 (40% Complete)</span>
-              <span>18 Days Remaining</span>
-            </div>
-
-            <div class="series-day-stepper">
-              <div class="series-day-pill" onclick="switchSeriesDay(11)">← Day 11</div>
-              <div class="series-day-pill active" onclick="switchSeriesDay(12)">Day 12 (Today)</div>
-              <div class="series-day-pill" onclick="alert('Day 13 unlocks tomorrow at 6:00 AM.')">Day 13 🔒</div>
+              <span id="seriesProgressText">Day 12 of 30 · 40% Complete</span>
+              <span id="seriesRemainingText">18 Days Remaining</span>
             </div>
           </div>
 
-          <div class="entry-field">
-            <label class="field-label" id="seriesPromptTitle" style="font-size: 15px; color: var(--tint-purple);">Day 12: Notice the Unnoticed</label>
-            <p id="seriesPromptSubtitle" style="font-size: 13px; color: var(--label-secondary); margin-bottom: 8px;">
-              Name three small details in your immediate surroundings or daily routine that you usually overlook.
-            </p>
-            <textarea class="field-textarea" style="min-height: 110px;" placeholder="1. The way the afternoon light hits the bookshelf...&#10;2. The silence right after the kettle turns off...&#10;3. "></textarea>
-          </div>
-
-          <div class="milestone-card">
-            <span style="font-size: 18px;">🎯</span>
-            <div>
-              <strong>Upcoming Milestone: Day 14 Retrospective</strong>
-              <div style="font-size: 11px; color: var(--label-secondary);">2-week habit reflection unlocks in 2 days.</div>
+          <!-- 30-Day Streak Matrix Grid -->
+          <div style="margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--label-secondary);">30-Day Journey Matrix (Tap any day)</span>
+              <span style="font-size: 11px; color: var(--tint-orange); font-weight: 600;">⭐ = Milestone Review</span>
+            </div>
+            <div class="streak-matrix-grid" id="seriesDaysGrid">
+              <!-- Injected dynamically -->
             </div>
           </div>
 
-          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Save Day 12 Reflection</span>
-          </button>
+          <!-- Active Day Editorial Prompt Card -->
+          <div id="activeDayCardContainer">
+            <!-- Injected dynamically -->
+          </div>
+
+          <details class="editorial-arc-details">
+            <summary>📖 Editorial Framework & Thematic Pedagogy (Review Note)</summary>
+            <div style="margin-top: 8px;">
+              <strong>• Week 1 (Days 1–7): Tuning In & Grounding</strong> — Establishing sensory presence, unhooking from mental speed, and physical space observation. Milestone on Day 7.<br><br>
+              <strong>• Week 2 (Days 8–14): Internal Weather & Unburdening</strong> — Somatic body awareness, naming emotional weather, processing unfinished experiences, and shedding tension. Milestone on Day 14.<br><br>
+              <strong>• Week 3 (Days 15–21): People & Everyday Connection</strong> — Relational appreciation, forgotten kindnesses, checking in on circle, and healthy boundaries as care. Milestone on Day 21.<br><br>
+              <strong>• Week 4 (Days 22–28): Agency, Purpose & Trajectory</strong> — Cultivating authentic voice, protected creative energy, decisive single priority, and optimism. Milestone on Day 28.<br><br>
+              <strong>• Final Capstone (Days 29–30): Integration & Synthesis</strong> — Harvesting core insights from the month and mapping the next chapter.
+            </div>
+          </details>
         `;
+        render30DayGrid(12);
+        showSeriesDay(12);
       }
 
       modal.classList.add('active');
@@ -1963,21 +2006,90 @@
       }
     }
 
-    function switchSeriesDay(day) {
-      const pills = document.querySelectorAll('.series-day-pill');
-      pills.forEach(p => p.classList.remove('active'));
-      const activePill = Array.from(pills).find(p => p.innerText.includes(`Day ${day}`));
-      if (activePill) activePill.classList.add('active');
+    function render30DayGrid(activeDay) {
+      const grid = document.getElementById('seriesDaysGrid');
+      if (!grid) return;
+      grid.innerHTML = seriesDays.map(d => {
+        const isCompleted = d.Day < 12;
+        const isActive = d.Day === activeDay;
+        const isMilestone = d['Is Milestone'] === 'Yes';
+        let cls = 'day-matrix-pill';
+        if (isActive) cls += ' active';
+        else if (isCompleted) cls += ' completed';
+        if (isMilestone) cls += ' milestone-day';
 
-      const title = document.getElementById('seriesPromptTitle');
-      const sub = document.getElementById('seriesPromptSubtitle');
-      if (day === 11) {
-        if (title) title.innerText = 'Day 11: The Space Between';
-        if (sub) sub.innerText = 'Reflect on a pause or quiet transition you experienced today. How did it feel to step off the treadmill?';
-      } else {
-        if (title) title.innerText = 'Day 12: Notice the Unnoticed';
-        if (sub) sub.innerText = 'Name three small details in your immediate surroundings or daily routine that you usually overlook.';
-      }
+        return `
+          <div class="${cls}" onclick="showSeriesDay(${d.Day})" title="Day ${d.Day}: ${d.Title}">
+            ${isMilestone ? '<span class="m-star">⭐</span>' : ''}
+            <span>${d.Day}</span>
+            <span class="pill-sub">${isActive ? 'TODAY' : (isCompleted ? '✓' : '')}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showSeriesDay(dayNum) {
+      selectedSeriesDay = dayNum;
+      render30DayGrid(dayNum);
+      const dayData = seriesDays.find(d => d.Day === dayNum) || seriesDays[0];
+      const container = document.getElementById('activeDayCardContainer');
+      if (!container) return;
+
+      const pct = Math.round((dayNum / 30) * 100);
+      const bar = document.getElementById('seriesBarFill');
+      const progText = document.getElementById('seriesProgressText');
+      const remText = document.getElementById('seriesRemainingText');
+      if (bar) bar.style.width = `${pct}%`;
+      if (progText) progText.innerText = `Day ${dayNum} of 30 · ${pct}% Complete`;
+      if (remText) remText.innerText = `${30 - dayNum} Days Ahead`;
+
+      const isMilestone = dayData['Is Milestone'] === 'Yes';
+
+      container.innerHTML = `
+        <div style="background: var(--card-subtle); border: 1.5px solid ${isMilestone ? 'var(--tint-orange)' : 'var(--separator)'}; border-radius: 16px; padding: 16px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--tint-purple); letter-spacing: 0.5px;">${dayData['Week Arc']}</span>
+            <span style="font-size: 11px; font-weight: 700; color: ${isMilestone ? 'var(--tint-orange)' : 'var(--label-secondary)'};">${isMilestone ? '⭐ MILESTONE RETROSPECTIVE' : 'Daily Prompt'}</span>
+          </div>
+          
+          <div style="font-size: 17px; font-weight: 700; color: var(--label-primary); margin-bottom: 10px; letter-spacing: -0.3px;">
+            Day ${dayData.Day}: ${dayData.Title}
+          </div>
+
+          <div style="font-size: 14px; color: var(--label-primary); line-height: 1.5; margin-bottom: 14px; background: var(--card-bg); padding: 12px 14px; border-radius: 12px; border-left: 3px solid ${isMilestone ? 'var(--tint-orange)' : 'var(--tint-purple)'};">
+            ${dayData['Editorial Prompt']}
+          </div>
+
+          ${isMilestone ? `
+            <div class="milestone-card" style="margin-bottom: 14px; margin-top: 0;">
+              <span style="font-size: 20px;">🏆</span>
+              <div>
+                <strong>${dayData['Milestone Focus']}</strong>
+                <div style="font-size: 11px; color: var(--label-secondary);">Strategic synthesis checkpoint across this week's reflections.</div>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="entry-field" style="margin-bottom: 0;">
+            <label class="field-label" style="font-size: 13px;">Your Reflection for Day ${dayData.Day}:</label>
+            <textarea class="field-textarea" style="min-height: 110px;" placeholder="Start writing Day ${dayData.Day} entry…">${dayData.Day === 12 ? 'The sunlight hitting the corner bookshelf at 4:15pm... the kettle click... footsteps in the hallway outside.' : ''}</textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button class="sheet-secondary-btn" style="margin-top: 0; flex: 1;" onclick="showSeriesDay(${Math.max(1, dayNum - 1)})" ${dayNum === 1 ? 'disabled style="opacity:0.4;cursor:default;"' : ''}>
+            ← Day ${Math.max(1, dayNum - 1)}
+          </button>
+          <button class="sheet-secondary-btn" style="margin-top: 0; flex: 1;" onclick="showSeriesDay(${Math.min(30, dayNum + 1)})" ${dayNum === 30 ? 'disabled style="opacity:0.4;cursor:default;"' : ''}>
+            Day ${Math.min(30, dayNum + 1)} →
+          </button>
+        </div>
+
+        <button class="sheet-bottom-save-btn" style="margin-top: 0;" onclick="saveAndCloseEntry()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Save Day ${dayData.Day} Entry</span>
+        </button>
+      `;
     }
 
     function openPromptEntry(bucket, promptText) {
