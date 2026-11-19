@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Journal Hub">
+  <title>Apple Journal · Template Architecture & Prompts</title>
+  <style>
+    :root {
+      --system-bg: #F2F2F7;
+      --card-bg: #FFFFFF;
+      --card-subtle: #F8F8FA;
+      --label-primary: #000000;
+      --label-secondary: #8E8E93;
+      --label-tertiary: #C7C7CC;
+      --separator: rgba(60, 60, 67, 0.12);
+      
+      --tint-purple: #5856D6;
+      --tint-blue: #007AFF;
+      --tint-teal: #30B0C7;
+      --tint-green: #34C759;
+      --tint-orange: #FF9500;
+      --tint-yellow: #DDA600;
+      --tint-pink: #FF2D55;
+      --tint-indigo: #5E5CE6;
+      --tint-mint: #00C7BE;
+
+      --radius-group: 16px;
+      --radius-card: 14px;
+      --radius-icon: 8px;
+      --radius-chip: 20px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --system-bg: #000000;
+        --card-bg: #1C1C1E;
+        --card-subtle: #2C2C2E;
+        --label-primary: #FFFFFF;
+        --label-secondary: #8E8E93;
+        --label-tertiary: #48484A;
+        --separator: rgba(84, 84, 88, 0.36);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--system-bg);
+      color: var(--label-primary);
+      padding: 20px 16px 80px 16px;
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
+
+    /* Top Navigation / App Header */
+    .app-header {
+      padding: 16px 4px 20px 4px;
+    }
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--tint-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .app-title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .app-subtitle {
+      font-size: 15px;
+      color: var(--label-secondary);
+      line-height: 1.45;
+    }
+
+    /* Executive Framework Banner */
+    .framework-card {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.08) 0%, rgba(0, 122, 255, 0.08) 100%);
+      border: 1px solid rgba(88, 86, 214, 0.18);
+      border-radius: var(--radius-group);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .framework-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--label-primary);
+      margin-bottom: 8px;
+    }
+    .framework-body {
+      font-size: 13px;
+      color: var(--label-secondary);
+      line-height: 1.4;
+    }
+    .framework-body strong {
+      color: var(--label-primary);
+    }
+
+    /* Segmented Control / Tabs */
+    .tab-bar {
+      display: flex;
+      background: var(--card-subtle);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--label-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--label-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* Section Category Headers */
+    .category-group {
+      margin-bottom: 24px;
+    }
+    .category-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--label-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-left: 8px;
+      margin-bottom: 8px;
+    }
+
+    /* Grouped iOS Style Table Rows */
+    .group-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-group);
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .row-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--separator);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .row-item:last-child {
+      border-bottom: none;
+    }
+    .row-item:active {
+      background-color: var(--card-subtle);
+    }
+    .row-leading {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      min-width: 0;
+    }
+    .symbol-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-icon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+    .symbol-badge svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .row-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .row-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      margin-bottom: 3px;
+      line-height: 1.3;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+    .row-subtitle {
+      font-size: 13px;
+      color: var(--label-secondary);
+      line-height: 1.35;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .row-hook-pills {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .hook-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--card-subtle);
+      color: var(--label-secondary);
+    }
+    .chevron-icon {
+      color: var(--label-tertiary);
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+
+    /* Category Filter Dropdown Toolbar */
+    .category-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      border: 1px solid var(--separator);
+      border-radius: var(--radius-card);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .filter-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--label-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+    }
+    .filter-label svg {
+      color: var(--tint-purple);
+    }
+    .filter-select-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .filter-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--card-subtle);
+      border: 1px solid var(--separator);
+      border-radius: 10px;
+      padding: 8px 32px 8px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--tint-purple);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .filter-select:hover {
+      border-color: var(--tint-purple);
+    }
+    .filter-select:focus {
+      border-color: var(--tint-purple);
+      box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.15);
+    }
+    .filter-select-arrow {
+      position: absolute;
+      right: 10px;
+      pointer-events: none;
+      color: var(--tint-purple);
+    }
+
+    /* Interactive Preview Modal / Screen */
+    .screen-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .screen-overlay.active {
+      display: flex;
+    }
+    .device-sheet {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      border-radius: 28px;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--separator);
+    }
+    .sheet-nav {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--separator);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    .sheet-nav-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+      flex: 1;
+      padding-right: 8px;
+    }
+    .sheet-bottom-save-btn {
+      background: var(--tint-purple);
+      color: #FFFFFF;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      transition: all 0.15s ease;
+      box-shadow: 0 3px 10px rgba(88, 86, 214, 0.25);
+    }
+    .sheet-bottom-save-btn:hover {
+      transform: translateY(-1px);
+    }
+    .sheet-bottom-save-btn:active {
+      transform: scale(0.98);
+      background: var(--tint-indigo);
+    }
+    .sheet-bottom-save-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .sheet-secondary-btn {
+      background: rgba(0, 122, 255, 0.08);
+      color: var(--tint-blue);
+      border: 1px solid rgba(0, 122, 255, 0.22);
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      transition: all 0.15s ease;
+    }
+    .sheet-secondary-btn:hover {
+      background: rgba(0, 122, 255, 0.14);
+    }
+    .sheet-secondary-btn:active {
+      transform: scale(0.98);
+    }
+    .sheet-secondary-btn svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .sheet-close-btn {
+      background: var(--card-subtle);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--label-secondary);
+      cursor: pointer;
+    }
+    .sheet-content {
+      padding: 20px;
+      flex: 1;
+    }
+
+    /* Mood State of Mind & Somatic Awareness */
+    .valence-selector {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: var(--card-subtle);
+      padding: 4px;
+      border-radius: 14px;
+    }
+    .valence-btn {
+      flex: 1;
+      padding: 8px 4px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--label-secondary);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .valence-btn .valence-emoji {
+      font-size: 18px;
+    }
+    .valence-btn.active {
+      background: var(--card-bg);
+      color: var(--label-primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      font-weight: 700;
+    }
+    .tag-chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .tag-chip {
+      background: var(--card-subtle);
+      border: 1px solid var(--separator);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--label-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tag-chip.active {
+      background: var(--tint-purple);
+      color: #FFFFFF;
+      border-color: var(--tint-purple);
+    }
+    .tag-chip.active-teal {
+      background: var(--tint-teal);
+      color: #FFFFFF;
+      border-color: var(--tint-teal);
+    }
+
+    /* Quotable Pull Quote Box */
+    .quotable-card {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.05) 0%, rgba(0, 122, 255, 0.05) 100%);
+      border: 1px solid rgba(88, 86, 214, 0.18);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .quote-icon {
+      font-size: 30px;
+      line-height: 1;
+      color: var(--tint-purple);
+      opacity: 0.6;
+      font-family: Georgia, serif;
+      margin-bottom: 4px;
+    }
+    .quote-textarea {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: Georgia, serif;
+      font-size: 17px;
+      line-height: 1.45;
+      font-style: italic;
+      color: var(--label-primary);
+      outline: none;
+      resize: none;
+      min-height: 85px;
+    }
+
+    /* 30-Day Series Tracker */
+    .series-progress-card {
+      background: var(--card-subtle);
+      border: 1px solid var(--separator);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .series-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .series-title-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--label-primary);
+    }
+    .series-streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tint-orange);
+      background: rgba(255, 149, 0, 0.12);
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+    .series-bar-track {
+      background: var(--separator);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .series-bar-fill {
+      background: linear-gradient(90deg, var(--tint-purple), var(--tint-blue));
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .series-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--label-secondary);
+      font-weight: 500;
+    }
+    .series-day-stepper {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .series-day-pill {
+      flex: 1;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--separator);
+      background: var(--card-bg);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--label-secondary);
+      cursor: pointer;
+    }
+    .series-day-pill.active {
+      border-color: var(--tint-purple);
+      color: var(--tint-purple);
+      background: rgba(88, 86, 214, 0.08);
+      font-weight: 700;
+    }
+    .milestone-card {
+      background: linear-gradient(135deg, rgba(255, 149, 0, 0.08) 0%, rgba(255, 204, 0, 0.08) 100%);
+      border: 1px dashed rgba(255, 149, 0, 0.4);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--label-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    /* Simulated Apple System UI Hooks inside Entry */
+    .system-tray {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .system-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-chip);
+      background: var(--card-subtle);
+      color: var(--tint-purple);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--separator);
+    }
+    .system-chip.maps {
+      color: var(--tint-green);
+    }
+    .system-chip.ticket {
+      color: var(--tint-orange);
+    }
+    .system-chip.music {
+      color: var(--tint-pink);
+    }
+    .system-chip.lock {
+      color: var(--label-secondary);
+    }
+
+    /* Template Input Fields */
+    .entry-field {
+      margin-bottom: 16px;
+    }
+    .field-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--label-primary);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .field-input, .field-textarea {
+      width: 100%;
+      border: 1px solid var(--separator);
+      background: var(--card-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 15px;
+      color: var(--label-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field-input:focus, .field-textarea:focus {
+      border-color: var(--tint-purple);
+      background: var(--card-bg);
+    }
+    .field-textarea {
+      min-height: 80px;
+      resize: none;
+    }
+
+    /* Numbered Bullet List Component (Gratitude) */
+    .bullet-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .bullet-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 149, 0, 0.12);
+      color: var(--tint-orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Photo Carousel Placeholder */
+    .photo-tray-placeholder {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .photo-slot {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: var(--card-subtle);
+      border: 1px dashed var(--label-tertiary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--label-secondary);
+      font-size: 11px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Timer Widget Component */
+    .timer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-subtle);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .timer-display {
+      font-size: 24px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--tint-purple);
+    }
+    .timer-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .timer-pill {
+      border: 1px solid var(--separator);
+      background: var(--card-bg);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--label-primary);
+    }
+    .timer-pill.active {
+      background: var(--tint-purple);
+      color: #FFFFFF;
+      border-color: var(--tint-purple);
+    }
+
+    /* Dynamic Add Block Card */
+    .repeatable-block {
+      background: var(--card-subtle);
+      border: 1px solid var(--separator);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .block-header-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--label-secondary);
+      margin-bottom: 10px;
+    }
+    .add-block-btn {
+      background: transparent;
+      border: 1.5px dashed var(--tint-purple);
+      color: var(--tint-purple);
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* "Need Inspiration?" Floating Bar inside Sheet */
+    .inspiration-banner {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.08) 0%, rgba(255, 149, 0, 0.08) 100%);
+      border: 1px solid rgba(88, 86, 214, 0.15);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .inspiration-banner-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--tint-purple);
+    }
+
+    /* Inspiration Tray (Full View) */
+    .inspiration-view {
+      display: none;
+    }
+    .inspiration-view.active {
+      display: block;
+    }
+    .prompt-bucket-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-group);
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid var(--separator);
+    }
+    .bucket-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--tint-purple);
+      margin-bottom: 4px;
+    }
+    .bucket-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .bucket-desc {
+      font-size: 13px;
+      color: var(--label-secondary);
+      margin-bottom: 14px;
+    }
+    .prompt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .prompt-bubble {
+      background: var(--card-subtle);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 500;
+      border-left: 3px solid var(--tint-purple);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .prompt-bubble:hover {
+      background: var(--card-bg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transform: translateY(-1px);
+    }
+    .prompt-bubble:active {
+      transform: scale(0.99);
+      background: var(--card-subtle);
+    }
+    .prompt-bubble-arrow {
+      color: var(--label-tertiary);
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .shuffle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: var(--tint-purple);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="eyebrow">Editorial Hub</div>
+    <h1 class="app-title">Apple Journal</h1>
+    <p class="app-subtitle">Interactive prototypes to showcase potential templates and prompts.</p>
+  </header>
+
+  <!-- Executive Framework Summary -->
+  <section class="framework-card">
+    <div class="framework-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      The Core Separation: Templates vs. Prompts
+    </div>
+    <div class="framework-body">
+      <strong>Templates</strong> are the modular UI containers built once by Design & Engineering (Photos, Maps, Timers, Lists).<br>
+      <strong>Prompts</strong> are the lightweight editorial fuel, available on demand in the <em>Inspiration (Prompts)</em> tab.
+    </div>
+  </section>
+
+  <!-- Tabs Navigation -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" id="tabTemplates" onclick="switchTab('templates')">Templates</button>
+    <button class="tab-btn" id="tabInspiration" onclick="switchTab('inspiration')">Inspiration (Prompts)</button>
+  </nav>
+
+  <!-- VIEW 1: TEMPLATE ARCHITECTURE -->
+  <main id="templatesView">
+
+    <!-- Category Filter Dropdown Toolbar -->
+    <div class="category-filter-bar">
+      <label class="filter-label" for="categorySelect">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <span>Category:</span>
+      </label>
+      <div class="filter-select-wrap">
+        <select id="categorySelect" class="filter-select" onchange="filterTemplatesCategory(this.value)">
+          <option value="all">All Categories (16)</option>
+          <option value="rituals">Daily Rituals (5)</option>
+          <option value="reflections">Guided Reflections (5)</option>
+          <option value="places">Places & Culture (6)</option>
+        </select>
+        <svg class="filter-select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+
+    <!-- Section 1: Daily Rituals -->
+    <div class="category-group" id="group-rituals">
+      <div class="category-header">Daily Rituals</div>
+      <div class="group-card">
+
+        <!-- Mood Check In -->
+        <div class="row-item" onclick="openPrototype('mood')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-purple);">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Mood Check In</div>
+              <div class="row-subtitle">Take your emotional pulse and check in with your body.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🧘 State of Mind</span>
+                <span class="hook-pill">🫀 Somatic Awareness</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Free Write -->
+        <div class="row-item" onclick="openPrototype('freewrite')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-indigo);">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Free Write</div>
+              <div class="row-subtitle">Set a timer and write without filtering or editing. See what comes.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">⏱️ 3/5/10m Timer</span>
+                <span class="hook-pill">🎙️ Audio Dictation</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Today’s Goals -->
+        <div class="row-item" onclick="openPrototype('goals')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-blue);">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Today’s Goals</div>
+              <div class="row-subtitle">Build momentum, one day at a time.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🎯 Top 3 Focus</span>
+                <span class="hook-pill">📅 Daily Trajectory</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Gratitude -->
+        <div class="row-item" onclick="openPrototype('gratitude')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-orange);">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Gratitude</div>
+              <div class="row-subtitle">Focus on the small wins.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🔒 FaceID Lock</span>
+                <span class="hook-pill">3 Blank Bullets</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Quotable -->
+        <div class="row-item" onclick="openPrototype('quotable')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-pink);">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Quotable</div>
+              <div class="row-subtitle">Lines, excerpts, and thoughts that stayed with you.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🔗 Safari / Books Link</span>
+                <span class="hook-pill">📷 Page Photo</span>
+                <span class="hook-pill">🎙️ Audio Snippet</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section 2: Guided Reflections -->
+    <div class="category-group" id="group-reflections">
+      <div class="category-header">Guided Reflections</div>
+      <div class="group-card">
+
+        <!-- Clear Your Head -->
+        <div class="row-item" onclick="openPrototype('clearhead')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-indigo);">
+              <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Clear Your Head</div>
+              <div class="row-subtitle">Release tension and unburden your thoughts.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🌙 Wind Down Mode</span>
+                <span class="hook-pill">4-Step Unburden</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Everyday Grounding -->
+        <div class="row-item" onclick="openPrototype('grounding')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-teal);">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Everyday Grounding</div>
+              <div class="row-subtitle">Observations to keep you in the moment.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">📷 Sensory Photo</span>
+                <span class="hook-pill">📍 Location Pin</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- People & Connection -->
+        <div class="row-item" onclick="openPrototype('connection')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-pink);">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">People & Connection</div>
+              <div class="row-subtitle">Celebrating relationships and everyday kindness.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">👥 Contacts Link</span>
+                <span class="hook-pill">Relational Note</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Focus & Forward -->
+        <div class="row-item" onclick="openPrototype('focusforward')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-blue);">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Focus & Forward</div>
+              <div class="row-subtitle">Cultivating agency, purpose, and looking ahead.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🎯 Focus Anchor</span>
+                <span class="hook-pill">Agency & Optimism</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- 30-Day Series -->
+        <div class="row-item" onclick="openPrototype('series30')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-yellow);">
+              <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">30-Day Series</div>
+              <div class="row-subtitle">Guided sequential journeys, one day at a time.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🏆 Habit / Streak Counter</span>
+                <span class="hook-pill">📅 Progressive Unlock</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section 3: Places & Culture -->
+    <div class="category-group" id="group-places">
+      <div class="category-header">Places & Culture</div>
+      <div class="group-card">
+
+        <!-- Dining Out -->
+        <div class="row-item" onclick="openPrototype('dining')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-green);">
+              <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Dining Out</div>
+              <div class="row-subtitle">A log of memorable meals and spots.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">📍 Maps POI</span>
+                <span class="hook-pill">📷 Photo Carousel</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Recipe Log -->
+        <div class="row-item" onclick="openPrototype('recipe')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-yellow);">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Recipe Log</div>
+              <div class="row-subtitle">What you made, how it tasted, notes for next time.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🔗 Safari / Food Link</span>
+                <span class="hook-pill">📷 Dish Photo</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Out & About -->
+        <div class="row-item" onclick="openPrototype('culture')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-teal);">
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Out & About</div>
+              <div class="row-subtitle">Art, live shows, festivals, and more.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🎟️ Apple Wallet Pass</span>
+                <span class="hook-pill">📍 Venue Pin</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Monthly Media -->
+        <div class="row-item" onclick="openPrototype('media')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-pink);">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Monthly Media</div>
+              <div class="row-subtitle">A snapshot of what you watched, listened to, and read.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">🎵 Apple Music</span>
+                <span class="hook-pill">Repeatable Blocks</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Day Trip -->
+        <div class="row-item" onclick="openPrototype('travel')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-blue);">
+              <svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Day Trip</div>
+              <div class="row-subtitle">Capture adventures near and far.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">📷 Photo Carousel</span>
+                <span class="hook-pill">☀️ Weather Stamp</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Trip Itinerary -->
+        <div class="row-item" onclick="openPrototype('itinerary')">
+          <div class="row-leading">
+            <div class="symbol-badge" style="background: var(--tint-mint);">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="row-text">
+              <div class="row-title">Trip Itinerary / Guide</div>
+              <div class="row-subtitle">Curated recommendations you can easily share.</div>
+              <div class="row-hook-pills">
+                <span class="hook-pill">📷 Trip Photos</span>
+                <span class="hook-pill">Multi-City Blocks</span>
+              </div>
+            </div>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- VIEW 2: INSPIRATION (PROMPTS) -->
+  <main id="inspirationView" class="inspiration-view">
+    <button class="shuffle-btn" onclick="shufflePrompts()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+      Shuffle Prompts Pool
+    </button>
+
+    <div id="inspirationContainer"></div>
+  </main>
+
+  <!-- INTERACTIVE PROTOTYPE MODAL SHEET -->
+  <div class="screen-overlay" id="prototypeModal" onclick="closeOnBackdrop(event)">
+    <div class="device-sheet" id="prototypeSheet">
+      <div class="sheet-nav">
+        <span class="sheet-nav-title" id="sheetTitle">Template Preview</span>
+        <button class="sheet-close-btn" title="Close" onclick="closePrototype()">✕</button>
+      </div>
+      <div class="sheet-content" id="sheetBody">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.getElementById('tabTemplates').classList.toggle('active', tab === 'templates');
+      document.getElementById('tabInspiration').classList.toggle('active', tab === 'inspiration');
+      document.getElementById('templatesView').style.display = tab === 'templates' ? 'block' : 'none';
+      document.getElementById('inspirationView').style.display = tab === 'inspiration' ? 'block' : 'none';
+    }
+
+    function filterTemplatesCategory(val) {
+      const ritualsGroup = document.getElementById('group-rituals');
+      const reflectionsGroup = document.getElementById('group-reflections');
+      const placesGroup = document.getElementById('group-places');
+
+      if (val === 'all') {
+        if (ritualsGroup) ritualsGroup.style.display = 'block';
+        if (reflectionsGroup) reflectionsGroup.style.display = 'block';
+        if (placesGroup) placesGroup.style.display = 'block';
+      } else if (val === 'rituals') {
+        if (ritualsGroup) ritualsGroup.style.display = 'block';
+        if (reflectionsGroup) reflectionsGroup.style.display = 'none';
+        if (placesGroup) placesGroup.style.display = 'none';
+      } else if (val === 'reflections') {
+        if (ritualsGroup) ritualsGroup.style.display = 'none';
+        if (reflectionsGroup) reflectionsGroup.style.display = 'block';
+        if (placesGroup) placesGroup.style.display = 'none';
+      } else if (val === 'places') {
+        if (ritualsGroup) ritualsGroup.style.display = 'none';
+        if (reflectionsGroup) reflectionsGroup.style.display = 'none';
+        if (placesGroup) placesGroup.style.display = 'block';
+      }
+    }
+
+    let timerInterval = null;
+    let timerSeconds = 300;
+    let gratitudeLineCount = 3;
+    let goalLineCount = 3;
+    let mediaCount = 1;
+    let stopCount = 1;
+
+    function openPrototype(id) {
+      const modal = document.getElementById('prototypeModal');
+      const title = document.getElementById('sheetTitle');
+      const body = document.getElementById('sheetBody');
+
+      if (id === 'gratitude') {
+        gratitudeLineCount = 3;
+        title.innerText = 'Gratitude';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip lock">🔒 Protected by Face ID</span>
+            <span class="system-chip">📅 Today, ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}</span>
+          </div>
+          <div id="bulletContainer">
+            <div class="bullet-row">
+              <div class="bullet-num">1</div>
+              <input type="text" class="field-input" placeholder="Start writing…">
+            </div>
+            <div class="bullet-row">
+              <div class="bullet-num">2</div>
+              <input type="text" class="field-input" placeholder="Start writing…">
+            </div>
+            <div class="bullet-row">
+              <div class="bullet-num">3</div>
+              <input type="text" class="field-input" placeholder="Start writing…">
+            </div>
+          </div>
+          <button onclick="addBulletLine()" style="background: var(--card-subtle); border: 1px dashed var(--separator); width: 100%; padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--tint-purple); cursor: pointer; margin-top: 8px;">
+            + Add Line
+          </button>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'goals') {
+        goalLineCount = 3;
+        title.innerText = 'Today’s Goals';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-blue);">🎯 Daily Trajectory</span>
+            <span class="system-chip">📅 Today</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Build momentum, one day at a time.
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Top priorities today:</label>
+            <div id="goalPriorityContainer">
+              <div class="bullet-row">
+                <div class="bullet-num" style="background: rgba(0, 122, 255, 0.12); color: var(--tint-blue);">1</div>
+                <input type="text" class="field-input" placeholder="Start writing…">
+              </div>
+              <div class="bullet-row">
+                <div class="bullet-num" style="background: rgba(0, 122, 255, 0.12); color: var(--tint-blue);">2</div>
+                <input type="text" class="field-input" placeholder="Start writing…">
+              </div>
+              <div class="bullet-row">
+                <div class="bullet-num" style="background: rgba(0, 122, 255, 0.12); color: var(--tint-blue);">3</div>
+                <input type="text" class="field-input" placeholder="Start writing…">
+              </div>
+            </div>
+            <button onclick="addGoalPriorityLine()" style="background: var(--card-subtle); border: 1px dashed var(--separator); width: 100%; padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--tint-blue); cursor: pointer; margin-top: 8px;">
+              + Add Line
+            </button>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">How are you setting yourself up for success today?</label>
+            <input type="text" class="field-input" placeholder="Start writing…">
+          </div>
+          <div class="entry-field">
+            <label class="field-label">End-of-day check: What helped you stay on track?</label>
+            <textarea class="field-textarea" style="min-height: 70px;" placeholder="What supported your momentum today?"></textarea>
+          </div>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'freewrite') {
+        title.innerText = 'Free Write';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="cursor: pointer;" onclick="alert('Microphone activated. Audio dictation streaming into entry…')">🎙️ Tap to Dictate</span>
+            <span class="system-chip">✍️ Freewrite</span>
+          </div>
+          <div class="timer-bar">
+            <div>
+              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--label-secondary);">Session Timer</div>
+              <div class="timer-display" id="timerClock">05:00</div>
+            </div>
+            <div class="timer-controls">
+              <button class="timer-pill" onclick="setTimer(180)">3m</button>
+              <button class="timer-pill active" onclick="setTimer(300)">5m</button>
+              <button class="timer-pill" onclick="setTimer(600)">10m</button>
+              <button class="timer-pill" style="background: var(--tint-purple); color: white;" onclick="toggleTimer()">Start</button>
+            </div>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 12px;">
+            Set a timer and write without filtering or editing. See what comes.
+          </div>
+          <textarea class="field-textarea" style="min-height: 220px;" placeholder="Start writing…"></textarea>
+          <div class="inspiration-banner" onclick="switchTab('inspiration'); closePrototype();">
+            <span class="inspiration-banner-text">💡 Feeling stuck? Shuffle a thought starter</span>
+            <span style="font-size: 12px; color: var(--tint-purple);">→</span>
+          </div>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'dining') {
+        title.innerText = 'Dining Out';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip maps">📍 Apple Maps: Via Carota, NYC</span>
+            <span class="system-chip">📷 2 Photos Attached</span>
+          </div>
+          <div class="photo-tray-placeholder">
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🥗</div>
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🍝</div>
+            <div class="photo-slot">+ Add</div>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Where did you eat?</label>
+            <input type="text" class="field-input" value="Via Carota (West Village)">
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Standout dishes or drinks:</label>
+            <textarea class="field-textarea" placeholder="Pappardelle al cinghiale, Meyer lemon spritz..."></textarea>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">The vibe or a standout memory:</label>
+            <input type="text" class="field-input" placeholder="Corner table, waited 45 min across the street, great crowd...">
+          </div>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'recipe') {
+        title.innerText = 'Recipe Log';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip">🔗 Apple News · Food & Wine</span>
+          </div>
+          <div class="photo-tray-placeholder">
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🥩</div>
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🌿</div>
+            <div class="photo-slot">+ Photo</div>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">What did you make?</label>
+            <input type="text" class="field-input" value="Spiced Pork Shoulder Steak with Salsa Verde and White Beans">
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Tweaks or substitutions for next time:</label>
+            <textarea class="field-textarea" placeholder="Swapped cannellini beans for Great Northern, doubled the capers in the salsa verde, added an extra squeeze of fresh lemon at the end..."></textarea>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">The verdict (how did it turn out?):</label>
+            <input type="text" class="field-input" placeholder="Incredible flavor for 40 min. The bright salsa verde cuts right through the rich pork. Total keeper.">
+          </div>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'culture') {
+        title.innerText = 'Out & About';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip ticket">🎟️ Wallet: Ambassador Theatre · Row D</span>
+            <span class="system-chip maps">📍 Broadway, NYC</span>
+          </div>
+          <div class="photo-tray-placeholder">
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🎭</div>
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🎪</div>
+            <div class="photo-slot">+ Photos</div>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Venue or event:</label>
+            <input type="text" class="field-input" placeholder="Chicago at the Ambassador Theatre">
+          </div>
+          <div class="entry-field">
+            <label class="field-label">What did you see or hear?</label>
+            <textarea class="field-textarea" placeholder="The orchestra on stage was incredible..."></textarea>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">A line, scene, or moment that stuck with you:</label>
+            <input type="text" class="field-input" placeholder="'Give 'em the old razzle dazzle...'">
+          </div>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'media') {
+        mediaCount = 1;
+        title.innerText = 'Monthly Media';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip music">🎵 Apple Music: Song on Repeat</span>
+          </div>
+          <div id="mediaBlocksContainer">
+            <div class="repeatable-block">
+              <div class="entry-field">
+                <label class="field-label">What are you reading, watching, or listening to?</label>
+                <input type="text" class="field-input" placeholder="Slow Horses (Season 4)">
+              </div>
+              <div class="entry-field">
+                <label class="field-label">One-sentence take / favorite line:</label>
+                <textarea class="field-textarea" style="min-height: 60px;" placeholder="Gary Oldman is playing Jackson Lamb with terrifying precision."></textarea>
+              </div>
+              <div class="entry-field" style="margin-bottom: 0;">
+                <label class="field-label">Who would you recommend this to?</label>
+                <input type="text" class="field-input" placeholder="Anyone who loves gritty spy comedy.">
+              </div>
+            </div>
+          </div>
+          <button class="add-block-btn" onclick="addMediaBlock()">
+            + Add Another Media Block
+          </button>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'travel') {
+        title.innerText = 'Day Trip / Travel';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip maps">📍 Hudson Valley, NY</span>
+            <span class="system-chip">☀️ 64° Crisp & Sunny</span>
+          </div>
+          <div class="photo-tray-placeholder">
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🍂</div>
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🚂</div>
+            <div class="photo-slot">+ Photos</div>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Where did you go?</label>
+            <input type="text" class="field-input" placeholder="Beacon & Cold Spring, NY">
+          </div>
+          <div class="entry-field">
+            <label class="field-label">Best detour or unexpected sight:</label>
+            <textarea class="field-textarea" placeholder="Stumbled into an antiquarian bookshop behind the train station..."></textarea>
+          </div>
+          <div class="entry-field">
+            <label class="field-label">A moment that felt distinct from home:</label>
+            <input type="text" class="field-input" placeholder="The smell of woodsmoke and the quiet over the river.">
+          </div>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'itinerary') {
+        stopCount = 1;
+        title.innerText = 'Trip Itinerary / Guide';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip maps">📍 Japan Trip Itinerary</span>
+            <span class="system-chip" style="color: var(--tint-blue);">📤 Ready to Share</span>
+          </div>
+          <div class="photo-tray-placeholder">
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">⛩️</div>
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🍣</div>
+            <div class="photo-slot">+ Photos</div>
+          </div>
+          <div id="stopsContainer">
+            <div class="repeatable-block">
+              <div class="block-header-label">Destination #1: Tokyo</div>
+              <div class="entry-field">
+                <label class="field-label">Stay (Neighborhood & Hotel):</label>
+                <input type="text" class="field-input" placeholder="TRUNK Hotel Yoyogi Park (Daikanyama)">
+              </div>
+              <div class="entry-field">
+                <label class="field-label">Eat & Drink Shortlist:</label>
+                <textarea class="field-textarea" style="min-height: 60px;" placeholder="• Pizza Marumo (Ebisu)&#10;• Fuglen Coffee (Tomigaya)&#10;• Afuri Ramen"></textarea>
+              </div>
+              <div class="entry-field">
+                <label class="field-label">See & Do Highlights:</label>
+                <textarea class="field-textarea" style="min-height: 60px;" placeholder="• Nezu Museum gardens&#10;• Shimokitazawa vintage hunting"></textarea>
+              </div>
+              <div class="entry-field" style="margin-bottom: 0;">
+                <label class="field-label">Insider Pro-Tips:</label>
+                <input type="text" class="field-input" placeholder="Load Suica card into Apple Wallet before landing.">
+              </div>
+            </div>
+          </div>
+          <button class="add-block-btn" onclick="addItineraryStop()">
+            + Add Another City / Region Block
+          </button>
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+          <button class="sheet-secondary-btn" onclick="shareViaMessages(this)">
+            <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            <span>Share Itinerary via Messages</span>
+          </button>
+        `;
+      } else if (id === 'mood') {
+        title.innerText = 'Mood Check In';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-purple);">🧘 State of Mind (iOS Health)</span>
+            <span class="system-chip">📅 Today, ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Take your emotional pulse and check in with your body.
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">How are you feeling right now?</label>
+            <div class="valence-selector">
+              <button class="valence-btn" onclick="selectValence(this, 'Very Unpleasant')">
+                <span class="valence-emoji">🌧️</span>
+                <span>Very Unpleasant</span>
+              </button>
+              <button class="valence-btn" onclick="selectValence(this, 'Unpleasant')">
+                <span class="valence-emoji">☁️</span>
+                <span>Unpleasant</span>
+              </button>
+              <button class="valence-btn" onclick="selectValence(this, 'Neutral')">
+                <span class="valence-emoji">⛅</span>
+                <span>Neutral</span>
+              </button>
+              <button class="valence-btn active" onclick="selectValence(this, 'Pleasant')">
+                <span class="valence-emoji">🌤️</span>
+                <span>Pleasant</span>
+              </button>
+              <button class="valence-btn" onclick="selectValence(this, 'Very Pleasant')">
+                <span class="valence-emoji">☀️</span>
+                <span>Very Pleasant</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">Where does this feeling live in your body?</label>
+            <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 6px;">
+              Tap somatic anchors:
+            </div>
+            <div class="tag-chips-wrap">
+              <span class="tag-chip active" onclick="toggleTagChip(this)">🫁 Chest / Heart</span>
+              <span class="tag-chip" onclick="toggleTagChip(this)">💆 Shoulders / Neck</span>
+              <span class="tag-chip" onclick="toggleTagChip(this)">🦋 Stomach / Gut</span>
+              <span class="tag-chip" onclick="toggleTagChip(this)">🧠 Head / Temples</span>
+              <span class="tag-chip" onclick="toggleTagChip(this)">👐 Hands / Arms</span>
+              <span class="tag-chip" onclick="toggleTagChip(this)">👣 Feet / Ground</span>
+            </div>
+            <textarea class="field-textarea" style="min-height: 75px;" placeholder="Describe sensation, color, or texture (e.g. warm amber glow in chest; tight knot behind shoulders; buzzing, fluttery, heavy, expansive...)"></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">What is influencing your mood today?</label>
+            <div class="tag-chips-wrap">
+              <span class="tag-chip active-teal" onclick="toggleTagChip(this, 'teal')">Work</span>
+              <span class="tag-chip active-teal" onclick="toggleTagChip(this, 'teal')">Sleep</span>
+              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Health</span>
+              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Relationships</span>
+              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Family</span>
+              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Weather</span>
+              <span class="tag-chip" onclick="toggleTagChip(this, 'teal')">Routine</span>
+            </div>
+            <input type="text" class="field-input" placeholder="Additional context (e.g. wrapped a big deadline, good morning coffee...)">
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'quotable') {
+        title.innerText = 'Quotable';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-purple);">🔗 Safari / Books Link</span>
+            <span class="system-chip">📷 Page Photo Attached</span>
+            <span class="system-chip">🎙️ Audio Snippet</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Save lines, excerpts, and thoughts that stayed with you.
+          </div>
+
+          <div class="quotable-card">
+            <div class="quote-icon">“</div>
+            <textarea class="quote-textarea" placeholder="Type or paste the quote, excerpt, or overheard line that stayed with you…">“In the depth of winter, I finally learned that within me there lay an invincible summer.”</textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">Source / Author / Speaker:</label>
+            <input type="text" class="field-input" value="Albert Camus, Return to Tipasa (1952)">
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">Link or Book Reference:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" class="field-input" placeholder="apple.news/..., Books p. 142, podcast time..." value="Books · Page 142">
+              <button onclick="alert('Live Text camera scanning page text…')" style="padding: 0 12px; background: var(--card-subtle); border: 1px solid var(--separator); border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--tint-purple); cursor: pointer; white-space: nowrap;">📷 Scan</button>
+            </div>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">Why did this stay with you?</label>
+            <textarea class="field-textarea" style="min-height: 80px;" placeholder="What was happening when you read or heard this? Why did it resonate?"></textarea>
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'clearhead') {
+        title.innerText = 'Clear Your Head';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-indigo);">🌙 Wind Down Mode</span>
+            <span class="system-chip">📅 Evening Reflection</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Release tension and unburden your thoughts.
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">1. What was the loudest moment of your day, and what was the quietest?</label>
+            <textarea class="field-textarea" placeholder="The noise vs. the still moments..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">2. Where in your body are you holding today’s stress right now?</label>
+            <input type="text" class="field-input" placeholder="Shoulders, jaw, chest, stomach...">
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">3. What is one thing that happened today you’re ready to leave behind tonight?</label>
+            <textarea class="field-textarea" placeholder="A comment, a setback, an unresolved email..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">4. What went better today than you expected it would?</label>
+            <input type="text" class="field-input" placeholder="An uplifting note to close the day...">
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'grounding') {
+        title.innerText = 'Everyday Grounding';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-teal);">🌿 Sensory Grounding</span>
+            <span class="system-chip maps">📍 Location Pin</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Observations to keep you in the moment.
+          </div>
+
+          <div class="photo-tray-placeholder">
+            <div class="photo-slot" style="background: #E5E5EA; border: none; font-size: 20px;">🍂</div>
+            <div class="photo-slot">+ Sensory Photo</div>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">1. Describe something you saw today that caught your eye for no particular reason.</label>
+            <textarea class="field-textarea" placeholder="A beam of light on a wall, an unusual sign, a color pattern..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">2. During a walk, drive, or transit ride—what was the pace, and where did your mind wander?</label>
+            <textarea class="field-textarea" placeholder="The movement and your drifting thoughts..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">3. What was one standout flavor, scent, or sound from today?</label>
+            <input type="text" class="field-input" placeholder="Freshly ground coffee, rain on asphalt, cold wind...">
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">4. In what moment today did you feel the most present?</label>
+            <input type="text" class="field-input" placeholder="When did time slow down?">
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'connection') {
+        title.innerText = 'People & Connection';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-pink);">👥 People & Connections</span>
+            <span class="system-chip">📅 Date Stamp</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Celebrating relationships and everyday kindness.
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">1. Who made you feel seen, heard, or backed up recently?</label>
+            <textarea class="field-textarea" placeholder="A colleague, partner, friend, or stranger..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">2. What is a kind thing someone did today that they probably forgot about?</label>
+            <textarea class="field-textarea" placeholder="A small gesture, a thoughtful handoff, an unprompted check-in..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">3. Who crossed your mind today that you haven’t talked to in a while?</label>
+            <input type="text" class="field-input" placeholder="Name or memory that surfaced...">
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">4. Who in your circle could use a little extra grace or a check-in?</label>
+            <input type="text" class="field-input" placeholder="Someone going through a transition or heavy week...">
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'focusforward') {
+        title.innerText = 'Focus & Forward';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-blue);">🎯 Focus & Trajectory</span>
+            <span class="system-chip">🧭 Personal Compass</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Cultivating agency, purpose, and looking ahead.
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">1. What made you feel most like yourself today?</label>
+            <textarea class="field-textarea" placeholder="A task, conversation, creative rhythm, or decision where you felt authentic..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">2. What is one project or career goal that deserves your protected energy right now?</label>
+            <textarea class="field-textarea" placeholder="Where your highest leverage creative attention belongs..."></textarea>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">3. What is the one priority that deserves your full attention tomorrow?</label>
+            <input type="text" class="field-input" placeholder="The single most important milestone tomorrow...">
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label">4. What is a small spark of optimism you're holding onto tonight?</label>
+            <input type="text" class="field-input" placeholder="A positive indicator, upcoming opportunity, or quiet hope...">
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save to Journal</span>
+          </button>
+        `;
+      } else if (id === 'series30') {
+        title.innerText = '30-Day Series';
+        body.innerHTML = `
+          <div class="system-tray">
+            <span class="system-chip" style="color: var(--tint-orange);">🏆 Day 12 of 30</span>
+            <span class="system-chip">🔥 12-Day Streak</span>
+            <span class="system-chip">📅 Progressive Unlock</span>
+          </div>
+          <div style="font-size: 13px; color: var(--label-secondary); margin-bottom: 14px;">
+            Guided sequential journeys, one day at a time.
+          </div>
+
+          <div class="series-progress-card">
+            <div class="series-header-row">
+              <div class="series-title-text">Series: Mindful Grounding & Self-Discovery</div>
+              <div class="series-streak-badge">🔥 12 Days</div>
+            </div>
+            <div class="series-bar-track">
+              <div class="series-bar-fill" style="width: 40%;"></div>
+            </div>
+            <div class="series-meta-row">
+              <span>Day 12 of 30 (40% Complete)</span>
+              <span>18 Days Remaining</span>
+            </div>
+
+            <div class="series-day-stepper">
+              <div class="series-day-pill" onclick="switchSeriesDay(11)">← Day 11</div>
+              <div class="series-day-pill active" onclick="switchSeriesDay(12)">Day 12 (Today)</div>
+              <div class="series-day-pill" onclick="alert('Day 13 unlocks tomorrow at 6:00 AM.')">Day 13 🔒</div>
+            </div>
+          </div>
+
+          <div class="entry-field">
+            <label class="field-label" id="seriesPromptTitle" style="font-size: 15px; color: var(--tint-purple);">Day 12: Notice the Unnoticed</label>
+            <p id="seriesPromptSubtitle" style="font-size: 13px; color: var(--label-secondary); margin-bottom: 8px;">
+              Name three small details in your immediate surroundings or daily routine that you usually overlook.
+            </p>
+            <textarea class="field-textarea" style="min-height: 110px;" placeholder="1. The way the afternoon light hits the bookshelf...&#10;2. The silence right after the kettle turns off...&#10;3. "></textarea>
+          </div>
+
+          <div class="milestone-card">
+            <span style="font-size: 18px;">🎯</span>
+            <div>
+              <strong>Upcoming Milestone: Day 14 Retrospective</strong>
+              <div style="font-size: 11px; color: var(--label-secondary);">2-week habit reflection unlocks in 2 days.</div>
+            </div>
+          </div>
+
+          <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save Day 12 Reflection</span>
+          </button>
+        `;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function selectValence(btn, val) {
+      document.querySelectorAll('.valence-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function toggleTagChip(chip, color) {
+      if (color === 'teal') {
+        chip.classList.toggle('active-teal');
+      } else {
+        chip.classList.toggle('active');
+      }
+    }
+
+    function switchSeriesDay(day) {
+      const pills = document.querySelectorAll('.series-day-pill');
+      pills.forEach(p => p.classList.remove('active'));
+      const activePill = Array.from(pills).find(p => p.innerText.includes(`Day ${day}`));
+      if (activePill) activePill.classList.add('active');
+
+      const title = document.getElementById('seriesPromptTitle');
+      const sub = document.getElementById('seriesPromptSubtitle');
+      if (day === 11) {
+        if (title) title.innerText = 'Day 11: The Space Between';
+        if (sub) sub.innerText = 'Reflect on a pause or quiet transition you experienced today. How did it feel to step off the treadmill?';
+      } else {
+        if (title) title.innerText = 'Day 12: Notice the Unnoticed';
+        if (sub) sub.innerText = 'Name three small details in your immediate surroundings or daily routine that you usually overlook.';
+      }
+    }
+
+    function openPromptEntry(bucket, promptText) {
+      const modal = document.getElementById('prototypeModal');
+      const title = document.getElementById('sheetTitle');
+      const body = document.getElementById('sheetBody');
+
+      title.innerText = bucket;
+      body.innerHTML = `
+        <div class="system-tray">
+          <span class="system-chip">💡 Inspiration Prompt</span>
+          <span class="system-chip">📅 Today, ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}</span>
+        </div>
+        <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.35; margin-bottom: 16px; color: var(--label-primary);">
+          ${promptText}
+        </div>
+        <div class="entry-field">
+          <textarea class="field-textarea" style="min-height: 240px; font-size: 16px; line-height: 1.5;" placeholder="Start writing…"></textarea>
+        </div>
+        <button class="sheet-bottom-save-btn" onclick="saveAndCloseEntry()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Save to Journal</span>
+        </button>
+      `;
+
+      modal.classList.add('active');
+    }
+
+    function addBulletLine() {
+      gratitudeLineCount++;
+      const container = document.getElementById('bulletContainer');
+      const div = document.createElement('div');
+      div.className = 'bullet-row';
+      div.innerHTML = `
+        <div class="bullet-num">${gratitudeLineCount}</div>
+        <input type="text" class="field-input" placeholder="Start writing…">
+      `;
+      container.appendChild(div);
+      div.querySelector('input').focus();
+    }
+
+    function addGoalPriorityLine() {
+      goalLineCount++;
+      const container = document.getElementById('goalPriorityContainer');
+      const div = document.createElement('div');
+      div.className = 'bullet-row';
+      div.innerHTML = `
+        <div class="bullet-num" style="background: rgba(0, 122, 255, 0.12); color: var(--tint-blue);">${goalLineCount}</div>
+        <input type="text" class="field-input" placeholder="Start writing…">
+      `;
+      container.appendChild(div);
+      div.querySelector('input').focus();
+    }
+
+    function addMediaBlock() {
+      mediaCount++;
+      const container = document.getElementById('mediaBlocksContainer');
+      const div = document.createElement('div');
+      div.className = 'repeatable-block';
+      div.innerHTML = `
+        <div class="entry-field">
+          <label class="field-label">What are you reading, watching, or listening to?</label>
+          <input type="text" class="field-input" placeholder="Title / Artist / Book">
+        </div>
+        <div class="entry-field">
+          <label class="field-label">One-sentence take / favorite line:</label>
+          <textarea class="field-textarea" style="min-height: 60px;" placeholder="Your takeaway..."></textarea>
+        </div>
+        <div class="entry-field" style="margin-bottom: 0;">
+          <label class="field-label">Who would you recommend this to?</label>
+          <input type="text" class="field-input" placeholder="Who should check this out...">
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function addItineraryStop() {
+      stopCount++;
+      const container = document.getElementById('stopsContainer');
+      const div = document.createElement('div');
+      div.className = 'repeatable-block';
+      div.innerHTML = `
+        <div class="block-header-label">Destination #${stopCount}: (e.g. Kyoto)</div>
+        <div class="entry-field">
+          <label class="field-label">Stay (Neighborhood & Hotel):</label>
+          <input type="text" class="field-input" placeholder="Neighborhood or spot to stay">
+        </div>
+        <div class="entry-field">
+          <label class="field-label">Eat & Drink Shortlist:</label>
+          <textarea class="field-textarea" style="min-height: 60px;" placeholder="• Standout spot 1&#10;• Standout spot 2"></textarea>
+        </div>
+        <div class="entry-field">
+          <label class="field-label">See & Do Highlights:</label>
+          <textarea class="field-textarea" style="min-height: 60px;" placeholder="• Highlight 1&#10;• Highlight 2"></textarea>
+        </div>
+        <div class="entry-field" style="margin-bottom: 0;">
+          <label class="field-label">Insider Pro-Tips:</label>
+          <input type="text" class="field-input" placeholder="Logistical or booking tip">
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function closePrototype() {
+      document.getElementById('prototypeModal').classList.remove('active');
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function closeOnBackdrop(e) {
+      if (e.target.id === 'prototypeModal') closePrototype();
+    }
+
+    function setTimer(sec) {
+      timerSeconds = sec;
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      const clock = document.getElementById('timerClock');
+      if (clock) {
+        clock.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+    }
+
+    function toggleTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      } else {
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            alert('Timer complete. Soft chime playing.');
+          }
+        }, 1000);
+      }
+    }
+
+    let promptBuckets = [
+      {
+        title: "Clear Your Head",
+        desc: "Release tension and check in with how you’re really feeling.",
+        prompts: [
+          "What was the loudest moment of your day, and what was the quietest?",
+          "Where in your body are you holding today’s stress right now?",
+          "What is one thing that happened today you’re ready to leave behind tonight?",
+          "What went better today than you expected it would?"
+        ]
+      },
+      {
+        title: "Everyday Grounding",
+        desc: "Observations to keep you in the moment.",
+        prompts: [
+          "Describe something you saw today that caught your eye for no particular reason.",
+          "During a walk, drive, or transit ride today—what was the pace, and where did your mind wander?",
+          "What was one standout flavor, scent, or sound from today?",
+          "In what moment today did you feel the most present?"
+        ]
+      },
+      {
+        title: "People & Connection",
+        desc: "Celebrating relationships and everyday kindness.",
+        prompts: [
+          "Who made you feel seen, heard, or backed up recently?",
+          "What is a kind thing someone did today that they probably forgot about?",
+          "Who crossed your mind today that you haven’t talked to in a while?",
+          "Who in your circle could use a little extra grace or a check-in?"
+        ]
+      },
+      {
+        title: "Focus & Forward",
+        desc: "Cultivating agency, purpose, and looking ahead with quiet optimism.",
+        prompts: [
+          "What made you feel most like yourself today?",
+          "What is one project or career goal that deserves your protected energy right now?",
+          "What is the one priority that deserves your full attention tomorrow?",
+          "What is a small spark of optimism you're holding onto tonight?"
+        ]
+      }
+    ];
+
+    function renderPrompts() {
+      const container = document.getElementById('inspirationContainer');
+      if (!container) return;
+
+      container.innerHTML = promptBuckets.map((bucketData, idx) => `
+        <div class="prompt-bucket-card" style="animation: fadeIn 0.25s ease;">
+          <div class="bucket-title">${bucketData.title}</div>
+          <div class="bucket-desc">${bucketData.desc}</div>
+          <div class="prompt-list">
+            ${bucketData.prompts.map(p => `
+              <div class="prompt-bubble" onclick="openPromptEntry('${bucketData.title.replace(/'/g, "\\'")}', '${p.replace(/'/g, "\\'")}')">
+                <span>${p}</span>
+                <span class="prompt-bubble-arrow">→</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function shufflePrompts() {
+      // Shuffle the order of the sections/categories while preserving each section's curated editorial flow
+      for (let i = promptBuckets.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [promptBuckets[i], promptBuckets[j]] = [promptBuckets[j], promptBuckets[i]];
+      }
+
+      // Visual micro-transition
+      const container = document.getElementById('inspirationContainer');
+      if (container) {
+        container.style.opacity = '0.3';
+        container.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+          renderPrompts();
+          container.style.transition = 'all 0.2s ease';
+          container.style.opacity = '1';
+          container.style.transform = 'scale(1)';
+        }, 120);
+      }
+    }
+
+    function saveAndCloseEntry() {
+      const saveBtn = document.querySelector('.sheet-bottom-save-btn');
+      if (saveBtn) {
+        saveBtn.style.background = 'var(--tint-green)';
+        saveBtn.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span>Saved to Journal</span>`;
+      }
+      setTimeout(() => {
+        closePrototype();
+        if (saveBtn) {
+          saveBtn.style.background = 'var(--tint-purple)';
+        }
+      }, 350);
+    }
+
+    function shareViaMessages(btn) {
+      const origHtml = btn.innerHTML;
+      btn.style.color = "var(--tint-green)";
+      btn.style.borderColor = "var(--tint-green)";
+      btn.style.background = "rgba(52, 199, 89, 0.08)";
+      btn.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Opening in Messages…</span>`;
+      setTimeout(() => {
+        btn.innerHTML = origHtml;
+        btn.style.color = "";
+        btn.style.borderColor = "";
+        btn.style.background = "";
+      }, 1200);
+    }
+
+    // Initialize prompt list on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPrompts();
+    });
+    // In case DOM is already ready
+    renderPrompts();
+  </script>
+</body>
+</html>
